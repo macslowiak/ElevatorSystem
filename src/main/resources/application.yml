@@ -1,0 +1,15 @@
+spring.application.name: ElevatorSystem
+server:
+  error:
+    include-stacktrace: never
+    include-binding-errors: never
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+building:
+  min-floor: -3
+  max-floor: 20
+elevators:
+  number-of-elevators-limit: 16

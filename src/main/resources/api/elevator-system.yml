@@ -1,0 +1,182 @@
+openapi: "3.0.0"
+info:
+  title: Elevator System API
+  version: "1.0.0"
+paths:
+  /elevators:
+    post:
+      summary: Create elevator in the system
+      operationId: createElevator
+      tags:
+        - elevators
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElevatorCreateRequest'
+      responses:
+        '201':
+          description: Elevator created in the system
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+  /elevators/{elevatorId}:
+    delete:
+      summary: Delete elevator from the system
+      operationId: deleteElevator
+      tags:
+        - elevators
+      parameters:
+        - in: path
+          name: elevatorId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the elevator to delete
+      responses:
+        '204':
+          description: Elevator deleted from the system
+  /elevators/status:
+    get:
+      summary: Get current status of all elevators
+      operationId: elevatorsStatus
+      tags:
+        - elevatorsStatus
+      responses:
+        '200':
+          description: List of elevator statuses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ElevatorStatusResponse'
+  /elevators/order:
+    post:
+      summary: Create an elevator order
+      operationId: orderElevator
+      tags:
+        - elevatorsOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElevatorOrderRequest'
+      responses:
+        '201':
+          description: Elevator order created
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+
+  /elevators/{elevatorId}/status:
+    put:
+      summary: Update status of the specific elevator
+      operationId: updateElevatorStatus
+      tags:
+        - elevatorsStatus
+      parameters:
+        - in: path
+          name: elevatorId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the elevator to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElevatorStatusUpdateRequest'
+      responses:
+        '204':
+          description: Elevator status sent
+  /elevators/{elevatorId}/move:
+    post:
+      summary: Make an elevator move one step
+      operationId: moveElevator
+      tags:
+        - elevatorsMove
+      parameters:
+        - in: path
+          name: elevatorId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the elevator to move
+      responses:
+        '204':
+          description: Elevator moved
+components:
+  schemas:
+    ElevatorCreateRequest:
+      type: object
+      required:
+        - currentElevatorFloor
+      properties:
+        currentElevatorFloor:
+          type: integer
+          format: int32
+          minimum: -3
+          maximum: 20
+    ElevatorOrderRequest:
+      type: object
+      required:
+        - direction
+        - orderFloor
+      properties:
+        orderFloor:
+          type: integer
+          format: int32
+          minimum: -3
+          maximum: 20
+        direction:
+          $ref: '#/components/schemas/Direction'
+    ElevatorStatusResponse:
+      type: object
+      required:
+        - elevatorId
+        - currentFloor
+        - nextStopFloor
+        - destinationFloor
+        - floorsToStop
+      properties:
+        elevatorId:
+          type: string
+          format: uuid
+        currentFloor:
+          type: integer
+          format: int32
+        destinationFloor:
+          type: integer
+          format: int32
+        nextStopFloor:
+          type: integer
+          format: int32
+        floorsToStop:
+          type: array
+          items:
+            type: integer
+            format: int32
+    ElevatorStatusUpdateRequest:
+      type: object
+      required:
+        - destinationFloor
+      properties:
+        destinationFloor:
+          type: integer
+          format: int32
+          minimum: -3
+          maximum: 20
+    Direction:
+      type: string
+      enum: [ UP, DOWN, NONE ]
